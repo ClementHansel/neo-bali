@@ -1,6 +1,5 @@
 import Company from "@/components/Company";
 import Hero from "../components/Hero";
-import { getAllProjects } from "../lib/projects";
 import { Project } from "../types";
 import Projects from "@/components/Projects";
 import WhatWeDo from "@/components/WhatWeDo";
@@ -20,9 +19,4 @@ export default function Home({}: { projects: Project[] }) {
       <Footer />
     </>
   );
-}
-
-export async function getStaticProps() {
-  const projects = getAllProjects();
-  return { props: { projects } };
 }
