@@ -3,7 +3,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import useScrollLock from "@/hooks/useScrollLock";
 import { useScrambleText } from "@/hooks/useScrambleText";
 import ParallaxLayer from "@/components/ParallaxLayer";
 
@@ -52,122 +51,53 @@ const showcases: ShowcaseItem[] = [
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
-const ShowcaseScroll: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+interface Props {
+  currentSlide: number;
+  setCurrentSlide: (i: number) => void;
+  totalSlides: number;
+  isLocked?: boolean;
+  requestUnlock?: () => void; // 🔥 MUST be included
+}
+
+const ShowcaseScroll: React.FC<Props> = ({
+  currentSlide,
+  setCurrentSlide,
+  totalSlides,
+  isLocked,
+  requestUnlock,
+}) => {
+  const activeIndex = currentSlide;
   const [direction, setDirection] = useState(1);
   const animatingRef = useRef(false);
-
   const mouseRef = useRef({ x: 0, y: 0 });
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
-
-  const { sectionRef, isLocked, unlockScroll } = useScrollLock(0.6);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { display: scrambledTitle, scrambleOnce } = useScrambleText();
 
-  useEffect(() => {
-    scrambleOnce(showcases[activeIndex].title, 850);
-  }, [activeIndex, scrambleOnce]);
+  // 🔥 Scramble new title only
+  useEffect(
+    () => scrambleOnce(showcases[activeIndex].title, 850),
+    [activeIndex, scrambleOnce]
+  );
 
+  // 🔥 Slide navigation (disabled if animating OR disabled by lock)
   const goTo = useCallback(
     (i: number) => {
       if (animatingRef.current || i === activeIndex) return;
+      if (i < 0 || i >= totalSlides) return;
+
       animatingRef.current = true;
-
       setDirection(i > activeIndex ? 1 : -1);
-      setActiveIndex(i);
+      setCurrentSlide(i);
 
-      setTimeout(() => {
-        animatingRef.current = false;
-      }, 900);
+      setTimeout(() => (animatingRef.current = false), 820);
     },
-    [activeIndex]
+    [activeIndex, setCurrentSlide, totalSlides]
   );
 
-  const nextSlide = useCallback(() => {
-    if (animatingRef.current) return;
-    animatingRef.current = true;
-    setDirection(1);
-
-    if (activeIndex === showcases.length - 1) {
-      unlockScroll();
-      setTimeout(() => (animatingRef.current = false), 200);
-      return;
-    }
-
-    setActiveIndex((v) => v + 1);
-    setTimeout(() => (animatingRef.current = false), 900);
-  }, [activeIndex, unlockScroll]);
-
-  const prevSlide = useCallback(() => {
-    if (animatingRef.current) return;
-    animatingRef.current = true;
-    setDirection(-1);
-
-    if (activeIndex === 0) {
-      unlockScroll();
-      setTimeout(() => (animatingRef.current = false), 200);
-      return;
-    }
-
-    setActiveIndex((v) => v - 1);
-    setTimeout(() => (animatingRef.current = false), 900);
-  }, [activeIndex, unlockScroll]);
-
+  // 🔥 Parallax Tracking
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el || !isLocked) return;
-
-    const onWheel = (ev: WheelEvent) => {
-      if (ev.deltaY > 20) {
-        ev.preventDefault();
-        nextSlide();
-      } else if (ev.deltaY < -20) {
-        ev.preventDefault();
-        prevSlide();
-      }
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, [isLocked, nextSlide, prevSlide, sectionRef]);
-
-  useEffect(() => {
-    if (!isLocked) return;
-
-    const onKey = (ev: KeyboardEvent) => {
-      if (ev.key === "ArrowDown") nextSlide();
-      if (ev.key === "ArrowUp") prevSlide();
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isLocked, nextSlide, prevSlide]);
-
-  const touchStartY = useRef<number | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isLocked) return;
-    if (touchStartY.current === null) return;
-
-    const y2 = e.changedTouches[0].clientY;
-    const diff = touchStartY.current - y2;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        nextSlide();
-      } else {
-        prevSlide();
-      }
-    }
-
-    touchStartY.current = null;
-  };
-
-  useEffect(() => {
-    const el = sectionRef.current;
+    const el = containerRef.current;
     if (!el) return;
 
     const onMove = (ev: MouseEvent) => {
@@ -191,8 +121,9 @@ const ShowcaseScroll: React.FC = () => {
       el.removeEventListener("mousemove", onMove);
       el.removeEventListener("mouseleave", onLeave);
     };
-  }, [sectionRef]);
+  }, []);
 
+  // 🔥 Smooth Parallax Animation
   useEffect(() => {
     let raf: number;
 
@@ -209,16 +140,46 @@ const ShowcaseScroll: React.FC = () => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // 🔥 CORE FIX: Internal scroll handler only when locked
+  useEffect(() => {
+    if (!isLocked) return;
+
+    const wheelHandler = (e: WheelEvent) => {
+      if (!isLocked) return;
+
+      // === EXIT CONDITIONS ===
+      if (e.deltaY > 0 && currentSlide === totalSlides - 1) {
+        requestUnlock?.(); // Exit on DOWN beyond last slide
+        return;
+      }
+
+      if (e.deltaY < 0 && currentSlide === 0) {
+        requestUnlock?.(); // Exit on UP beyond first slide
+        return;
+      }
+
+      // === INTERNAL SLIDE MOVEMENT ===
+      if (e.deltaY > 0) goTo(currentSlide + 1);
+      if (e.deltaY < 0) goTo(currentSlide - 1);
+
+      e.preventDefault(); // VERY IMPORTANT: block page scroll
+    };
+
+    window.addEventListener("wheel", wheelHandler, { passive: false });
+    return () => window.removeEventListener("wheel", wheelHandler);
+  }, [isLocked, currentSlide, totalSlides, goTo, requestUnlock]);
+
+  // 🔥 Progress bar ratio (0 to 1)
+  const progress = totalSlides > 1 ? activeIndex / (totalSlides - 1) : 0;
+
   return (
     <section
-      ref={sectionRef}
+      ref={containerRef}
       className="relative w-full h-screen overflow-hidden bg-black text-white select-none"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       role="group"
       aria-roledescription="carousel"
     >
-      {/* background video */}
+      {/* BACKGROUND VIDEO */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.video
@@ -228,39 +189,44 @@ const ShowcaseScroll: React.FC = () => {
             muted
             loop
             playsInline
+            className="w-full h-full object-cover"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ duration: 0.9, ease: "easeInOut" }}
-            className="w-full h-full object-cover"
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-black/45" />
       </div>
 
-      {/* Content */}
+      {/* CENTER CONTENT */}
       <div className="absolute inset-0 flex items-center justify-center px-6 text-center pointer-events-none">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={showcases[activeIndex].id}
             initial={{
               opacity: 0,
-              rotateX: direction > 0 ? -80 : 80,
-              y: direction > 0 ? 120 : -120,
-              scale: 0.98,
+              rotateX: direction > 0 ? -85 : 85,
+              y: direction > 0 ? 150 : -150,
+              scale: 0.985,
             }}
-            animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
+            animate={{
+              opacity: 1,
+              rotateX: 0,
+              y: 0,
+              scale: 1,
+            }}
             exit={{
               opacity: 0,
-              rotateX: direction > 0 ? 80 : -80,
-              y: direction > 0 ? -120 : 120,
-              scale: 0.98,
+              rotateX: direction > 0 ? 85 : -85,
+              y: direction > 0 ? -150 : 150,
+              scale: 0.985,
             }}
-            transition={{ duration: 0.9, ease: [0.2, 0.9, 0.25, 1] }}
+            transition={{ duration: 0.82, ease: [0.22, 1, 0.36, 1] }}
             style={{ perspective: 1400, width: "100%" }}
             className="relative max-w-5xl mx-auto"
           >
-            {/* BACK layer */}
+            {/* PARALLAX LAYERS */}
             <ParallaxLayer
               depth={0.18}
               className="absolute inset-0"
@@ -272,7 +238,6 @@ const ShowcaseScroll: React.FC = () => {
               }}
             />
 
-            {/* MIDDLE text */}
             <ParallaxLayer
               depth={0.35}
               className="relative z-10"
@@ -287,12 +252,12 @@ const ShowcaseScroll: React.FC = () => {
                 <span aria-hidden>{scrambledTitle}</span>
                 <span className="sr-only">{showcases[activeIndex].title}</span>
               </h2>
+
               <p className="text-lg max-w-2xl mx-auto leading-relaxed opacity-90">
                 {showcases[activeIndex].description}
               </p>
             </ParallaxLayer>
 
-            {/* FOREGROUND */}
             <ParallaxLayer
               depth={0.65}
               className="absolute inset-0 z-20 pointer-events-none"
@@ -307,66 +272,106 @@ const ShowcaseScroll: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* DOT NAVIGATOR */}
-      <nav
-        className="absolute right-8 top-1/2 -translate-y-1/2 z-30"
-        aria-label="Showcase navigation"
-      >
-        <ul className="flex flex-col gap-3">
-          {showcases.map((s, i) => {
-            const isActive = i === activeIndex;
+      {/* PROGRESS + DOTS */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-30 flex items-center gap-4">
+        {/* PROGRESS BAR */}
+        <div className="flex items-center">
+          <div
+            className="progress-column w-1 h-44 bg-white/10 rounded-full relative overflow-hidden"
+            aria-hidden
+            onClick={(e) => {
+              const col = (e.target as HTMLElement).closest(".progress-column");
+              if (!col) return;
 
-            return (
-              <li key={s.id}>
-                <motion.button
-                  onClick={() => goTo(i)}
-                  className="relative w-4 h-4 flex items-center justify-center"
-                  aria-label={`Go to ${s.title}`}
-                  whileTap={{ scale: 0.95 }}
+              const rect = col.getBoundingClientRect();
+              const clickY = e.nativeEvent.clientY - rect.top;
+              const ratio = clickY / rect.height;
+              const targetIndex = Math.round(ratio * (totalSlides - 1));
+
+              goTo(targetIndex);
+            }}
+          >
+            <motion.div
+              initial={false}
+              animate={{ height: `${Math.max(4, progress * 100)}%` }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute bottom-0 left-0 right-0 bg-white rounded-full"
+            />
+          </div>
+        </div>
+
+        {/* DOT NAVIGATION */}
+        <motion.nav
+          aria-label="Showcase navigation"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: 0.08, delayChildren: 0.32 },
+            },
+          }}
+        >
+          <ul className="flex flex-col gap-3">
+            {Array.from({ length: totalSlides }).map((_, i) => {
+              const isActive = i === activeIndex;
+
+              return (
+                <motion.li
+                  key={i}
+                  variants={{
+                    hidden: { opacity: 0, x: 10 },
+                    visible: { opacity: 1, x: 0 },
+                  }}
                 >
-                  <motion.span
-                    layout
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 24,
-                    }}
-                    className={`block rounded-full ${
-                      isActive ? "w-4 h-4" : "w-2 h-2"
-                    } bg-white`}
-                    style={{
-                      opacity: isActive ? 1 : 0.6,
-                      boxShadow: isActive
-                        ? "0 6px 20px rgba(255,255,255,0.08)"
-                        : "none",
-                    }}
-                  />
-
-                  {isActive && (
+                  <motion.button
+                    onClick={() => goTo(i)}
+                    className="relative w-4 h-4 flex items-center justify-center"
+                    aria-label={`Go to slide ${i + 1}`}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <motion.span
-                      initial={{ scale: 0.6, opacity: 0.2 }}
-                      animate={{ scale: 1.8, opacity: 0.06 }}
+                      layout
                       transition={{
-                        duration: 0.9,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
+                        type: "spring",
+                        stiffness: 320,
+                        damping: 28,
                       }}
-                      className="absolute rounded-full w-8 h-8 -z-10"
-                      style={
-                        {
+                      className={`block rounded-full ${
+                        isActive ? "w-4 h-4" : "w-2 h-2"
+                      } bg-white`}
+                      style={{
+                        opacity: isActive ? 1 : 0.6,
+                        boxShadow: isActive
+                          ? "0 6px 20px rgba(255,255,255,0.08)"
+                          : "none",
+                      }}
+                    />
+
+                    {isActive && (
+                      <motion.span
+                        initial={{ scale: 0.6, opacity: 0.18 }}
+                        animate={{ scale: 1.8, opacity: 0.06 }}
+                        transition={{
+                          duration: 0.9,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                          ease: "easeInOut",
+                        }}
+                        className="absolute rounded-full w-8 h-8 -z-10"
+                        style={{
                           background:
                             "radial-gradient(closest-side, rgba(255,255,255,0.06), rgba(255,255,255,0))",
-                        } as React.CSSProperties
-                      }
-                    />
-                  )}
-                </motion.button>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+                        }}
+                      />
+                    )}
+                  </motion.button>
+                </motion.li>
+              );
+            })}
+          </ul>
+        </motion.nav>
+      </div>
     </section>
   );
 };
