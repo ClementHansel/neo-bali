@@ -89,60 +89,6 @@ export default function Company() {
         </span>
       </motion.p>
 
-      {/* CTA BUTTONS */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={
-          inView
-            ? {
-                opacity: 1,
-                y: 0,
-                transition: { delay: 1.0, duration: 0.8, ease: EASING },
-              }
-            : { opacity: 0, y: 30 }
-        }
-        className="mt-8 flex flex-col sm:flex-row items-center gap-4"
-      >
-        {/* Contact Form */}
-        <button
-          onClick={() => {
-            const contactSection = document.getElementById("contact-form");
-            if (contactSection) {
-              contactSection.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-          className="
-            px-6 py-3
-            bg-black text-white
-            rounded-full
-            text-base sm:text-lg
-            hover:bg-gray-900
-            transition-all duration-300
-            shadow-lg shadow-black/10
-          "
-        >
-          Contact Us
-        </button>
-
-        {/* WhatsApp */}
-        <a
-          href="https://wa.me/6281234567890"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-    px-6 py-3
-    border border-black
-    rounded-full
-    text-base sm:text-lg
-    text-black
-    hover:bg-black hover:text-white
-    transition-all duration-300
-  "
-        >
-          WhatsApp Us
-        </a>
-      </motion.div>
-
       {/* Background Accent */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}

@@ -61,7 +61,7 @@ export default function COOTestimony() {
           variants={fadeUp}
           custom={1}
         >
-          <p className="font-semibold text-lg">Raoul Miller</p>
+          <p className="font-semibold text-lg">Raoul Muller</p>
           <p className="text-sm uppercase tracking-wider text-gray-500 mb-2">
             Founder
           </p>

@@ -77,7 +77,7 @@ export default function Projects() {
         }
         className="text-4xl md:text-6xl font-bold mb-12 sm:mb-16 text-center"
       >
-        Our Projects
+        OUR PROJECTS
       </motion.h2>
 
       {/* Projects */}

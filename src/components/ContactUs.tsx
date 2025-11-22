@@ -47,7 +47,7 @@ export default function ContactUs() {
           transition={{ duration: 0.7 }}
           className="text-4xl font-bold mb-6 text-center"
         >
-          Contact Us
+          CONTACT US
         </motion.h2>
 
         <motion.p
