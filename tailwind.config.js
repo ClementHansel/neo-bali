@@ -13,9 +13,13 @@ module.exports = {
         },
       },
       fontFamily: {
-        // Default sans font
+        // BODY FONT
         sans: ["Inter", "ui-sans-serif", "system-ui"],
-        // Söhne Mono for monospace text
+
+        // BRAND FONT (HEADINGS, TITLES, SPECIAL UI)
+        brand: ['"Söhne Mono"', "monospace"],
+
+        // Optional explicit mono
         mono: ['"Söhne Mono"', "monospace"],
       },
     },

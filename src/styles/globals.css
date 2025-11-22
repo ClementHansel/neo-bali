@@ -58,8 +58,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: "Söhne Mono", monospace;
+
+  /* BODY FONT */
+  --font-sans: Inter, ui-sans-serif, system-ui;
+
+  /* BRAND FONT */
+  --font-brand: "Söhne Mono", monospace;
 }
 
 /* =======================
@@ -78,7 +82,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Söhne Mono", monospace;
+  font-family: Inter, ui-sans-serif, system-ui; /* BODY FONT */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
