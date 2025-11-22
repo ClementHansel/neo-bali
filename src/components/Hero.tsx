@@ -83,7 +83,7 @@ export default function Hero() {
             h-[100svh]
             flex items-start
             px-6 md:px-12 
-            pt-20
+            pt-30
             z-20
           "
         >
@@ -93,17 +93,17 @@ export default function Hero() {
             transition={{ duration: 1.2, ease: cinematic }}
             className="text-white max-w-xl space-y-2 md:space-y-4"
           >
-            <h1 className="text-4xl md:text-6xl font-light font-sohne">neo.</h1>
+            <h1 className="text-6xl md:text-6xl font-light font-sohne">neo.</h1>
 
-            <p className="text-base md:text-lg opacity-90">
+            <p className="text-lg md:text-lg opacity-90">
               global luxury brand factory.
             </p>
 
-            <p className="text-base md:text-lg opacity-90">
+            <p className="text-lg md:text-lg opacity-90">
               prototyping in bali and berlin.
             </p>
 
-            <p className="text-base md:text-lg opacity-90">
+            <p className="text-lg md:text-lg opacity-90">
               founded by consultants and developers.
             </p>
           </motion.div>
@@ -112,12 +112,12 @@ export default function Hero() {
         {/* RIGHT MENU */}
         <div
           className="
-            absolute bottom-20 right-6 
-            md:bottom-20 md:right-16 
+            absolute bottom-30 right-6 
+            md:bottom-30 md:right-16 
             z-30 text-right
           "
         >
-          <div className="text-xs md:text-sm tracking-widest text-gray-200 mb-4 md:mb-6">
+          <div className="text-3xl md:text-4xl tracking-widest text-gray-200 mb-4 md:mb-6">
             explore
           </div>
 
