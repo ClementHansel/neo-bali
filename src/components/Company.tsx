@@ -80,12 +80,12 @@ export default function Company() {
   "
       >
         <span>
-          We craft interactive experiences, digital products, and creative
-          strategies that connect ideas to people.
+          We build immersive digital experiences, forward-thinking products, and
+          creative strategies that turn ideas into human connections.
         </span>
         <br />
         <span className="block mt-2">
-          Bridging design, technology, and emotion.
+          Merging design, technology, and emotion into powerful brand moments.
         </span>
       </motion.p>
 

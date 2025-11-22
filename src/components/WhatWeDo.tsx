@@ -107,9 +107,9 @@ export default function WhatWeDo() {
           variants={fadeUp}
           custom={1}
         >
-          We love to create brands, convert leads into sales, and drive your
-          growth. Relentless performance-driven, always customer-centered,
-          high-conversion focused.
+          We love to create brands, convert leads into fans, and drive your
+          growth. Relentless Perfectionism, always customer-centered,
+          high-conversion focussed.
         </motion.p>
       </div>
 
