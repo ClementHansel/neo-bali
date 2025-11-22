@@ -112,8 +112,8 @@ export default function Hero() {
         {/* RIGHT MENU */}
         <div
           className="
-            absolute bottom-30 right-6 
-            md:bottom-30 md:right-16 
+            absolute bottom-25 right-6 
+            md:bottom-25 md:right-16 
             z-30 text-right
           "
         >
