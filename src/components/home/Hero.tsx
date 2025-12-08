@@ -193,9 +193,9 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-[100svh] overflow-hidden font-inter lowercase"
+      className="relative w-full min-h-svh overflow-hidden font-inter lowercase"
     >
-      <div className="sticky top-0 h-[100svh] w-full">
+      <div className="sticky top-0 h-svh w-full">
         {/* VIDEO */}
         <video
           ref={videoRef}
@@ -216,25 +216,34 @@ export default function Hero() {
             - Tablet/Mobile: stacks and scales
            ---------------- */}
         <div className="absolute inset-0 z-20 pointer-events-none">
-          {/* Title: "neo." — centered at desktop, stacked on mobile */}
+          {/* Title: "neo." */}
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: cinematic }}
-            className="pointer-events-auto text-[#2B2B2E] font-brand font-normal leading-[80px] tracking-tight
-                       text-[20px] md:text-[24px] md:w-[434px]
-                       absolute md:left-1/2 md:transform md:-translate-x-1/2
-                       top-[64px] md:top-[87px] left-6 md:left-auto"
+            className="
+    pointer-events-auto text-white font-brand font-normal 
+    leading-20 tracking-tight
+    text-[22px] md:text-[24px] md:w-[434px]
+    absolute 
+    top-16 md:top-[87px]
+    left-6 md:left-1/2 md:-translate-x-1/2
+  "
             style={{ letterSpacing: "-0.01em" }}
           >
             neo.
           </motion.h1>
 
-          {/* Block: global luxury brand factory. */}
+          {/* left column block 1 */}
           <p
-            className="pointer-events-auto absolute top-[140px] md:top-[159px] left-3 md:left-[12px]
-                       text-[#2B2B2E] font-mono2 font-[300] text-[18px] md:text-[20px]
-                       leading-[22px] md:w-[223px]"
+            className="
+    pointer-events-auto absolute 
+    top-[140px] md:top-[159px]
+    left-6 md:left-3
+    text-white font-mono2 font-light 
+    text-[22px] md:text-[24px]
+    leading-[22px] md:w-[223px]
+  "
             style={{ letterSpacing: "-0.01em", margin: 0 }}
           >
             global luxury
@@ -242,11 +251,16 @@ export default function Hero() {
             brand factory.
           </p>
 
-          {/* Block: creating in bali and berlin. */}
+          {/* left column block 2 */}
           <p
-            className="pointer-events-auto absolute top-[206px] md:top-[225px] left-3 md:left-[12px]
-                       text-[#2B2B2E] font-mono2 font-[300] text-[18px] md:text-[20px]
-                       leading-[22px] md:w-[195px]"
+            className="
+    pointer-events-auto absolute 
+    top-[206px] md:top-[225px]
+    left-6 md:left-3
+    text-white font-mono2 font-light
+    text-[22px] md:text-[24px]
+    leading-[22px] md:w-[195px]
+  "
             style={{ letterSpacing: "-0.01em", margin: 0 }}
           >
             creating in
@@ -254,11 +268,16 @@ export default function Hero() {
             bali and berlin.
           </p>
 
-          {/* Block: founded by consultants and developers. */}
+          {/* left column block 3 */}
           <p
-            className="pointer-events-auto absolute top-[270px] md:top-[291px] left-3 md:left-[12px]
-                       text-[#2B2B2E] font-mono2 font-[300] text-[18px] md:text-[20px]
-                       leading-[22px] md:w-[195px]"
+            className="
+    pointer-events-auto absolute 
+    top-[270px] md:top-[291px]
+    left-6 md:left-3
+    text-white font-mono2 font-light
+    text-[22px] md:text-[24px]
+    leading-[22px] md:w-[195px]
+  "
             style={{ letterSpacing: "-0.01em", margin: 0 }}
           >
             founded by
@@ -267,72 +286,15 @@ export default function Hero() {
             <br />
             developers.
           </p>
-
-          {/* DECOR / services right-aligned group (desktop). On mobile these are hidden or stacked under content */}
-          <div className="hidden md:block pointer-events-auto">
-            {/* "digital marketing" right-aligned group */}
-            <p
-              className="absolute top-[377px] left-[130px] w-[294px] text-right text-[#2B2B2E]
-                         font-mono2 font-[300] text-[20px] leading-[22px]"
-              style={{ letterSpacing: "-0.01em", margin: 0 }}
-            >
-              digital
-              <br />
-              marketing
-            </p>
-
-            {/* rounded translucent button for strategy. (Figma) */}
-            <div
-              className="absolute left-[229px] top-[431px] w-[195px] h-[62px] rounded-[30px]
-                         bg-[rgba(0,0,0,0.07)]/50 flex items-center justify-center"
-              style={{ padding: "20px 32px", gap: "9px" }}
-            >
-              <button
-                onClick={() => {
-                  /* keep inert handler — logic preserved: you can change to navigate later */
-                  console.log("strategy button clicked");
-                }}
-                className="font-mono2 text-[20px] text-white"
-                style={{ all: "unset", cursor: "pointer" }}
-              >
-                strategy.
-              </button>
-            </div>
-
-            {/* white stacked labels */}
-            <p
-              className="absolute top-[463px] left-[229px] w-[195px] text-right text-white
-                         font-mono2 font-[250] text-[20px] leading-[22px]"
-              style={{ letterSpacing: "-0.01em", margin: 0 }}
-            >
-              creatives.
-            </p>
-
-            <p
-              className="absolute top-[495px] left-[229px] w-[195px] text-right text-white
-                         font-mono2 font-[250] text-[20px] leading-[22px]"
-              style={{ letterSpacing: "-0.01em", margin: 0 }}
-            >
-              technology.
-            </p>
-
-            <p
-              className="absolute top-[527px] left-[229px] w-[195px] text-right text-white
-                         font-mono2 font-[250] text-[20px] leading-[22px]"
-              style={{ letterSpacing: "-0.01em", margin: 0 }}
-            >
-              ads.
-            </p>
-          </div>
         </div>
 
         {/* RIGHT MENU (unchanged logic / layout) */}
         <div className="absolute bottom-35 right-6 md:bottom-25 md:right-16 z-30 text-right font-mono2 text-white">
-          <div className="text-2xl md:text-3xl tracking-widest font-mono2 text-white mb-4 md:mb-6">
+          <div className="text-[22px] md:text-[24px] tracking-widest font-mono2 text-white mb-1 md:mb-2">
             industries.
           </div>
 
-          <ul className="flex flex-col gap-3 md:gap-4">
+          <ul className="flex flex-col gap-1 md:gap-2">
             {MENU.map((item, i) => {
               const active = i === activeIndex;
               return (
@@ -345,7 +307,7 @@ export default function Hero() {
                         color: active ? "#FFFFFFFF" : "#ffffffa3",
                       }}
                       transition={{ ease: cinematic, duration: 0.4 }}
-                      className="text-xl md:text-3xl font-light font-inter transition-all"
+                      className="text-[22px] md:text-[24px] font-light font-inter transition-all"
                     >
                       {item.label}
                     </motion.span>
