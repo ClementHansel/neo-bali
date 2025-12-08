@@ -83,8 +83,14 @@
   /* BRAND FONT */
   --font-brand: "Söhne Mono", monospace;
 
-  /* BRAND FONT */
-  --font-azura: "Helvetica Condensed", monospace;
+  /* AZURA FONT */
+  --font-azura: "The Seasons", monospace;
+
+  /* Addressbali FONT */
+  --font-ab: "Helvetica Condensed", monospace;
+
+  /* Yamaha FONT */
+  --font-yamaha: "Söhne Mono", monospace;
 }
 
 /* =======================

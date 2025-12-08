@@ -39,7 +39,7 @@ function getBrandFont(title: string) {
     case "Developer":
       return "font-azura lowercase";
     case "ADDRESSBALI®":
-      return "font-address";
+      return "font-ab";
     case "YAMAHA":
       return "font-yamaha";
     default:

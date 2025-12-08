@@ -26,8 +26,14 @@ module.exports = {
         // Explicit mono2
         mono2: ['"Söhne Mono"', "monospace"],
 
-        // Explicit mono2
-        mono3: ['"Helvetica-Condensed"', "monospace"],
+        // azura
+        azura: ['"The Seasons"', "monospace"],
+
+        // addressbali
+        ab: ['"Helvetica-Condensed"', "monospace"],
+
+        // yamaha
+        ab: ['"Söhne Mono"', "monospace"],
       },
     },
   },
