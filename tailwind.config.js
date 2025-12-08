@@ -25,6 +25,9 @@ module.exports = {
 
         // Explicit mono2
         mono2: ['"Söhne Mono"', "monospace"],
+
+        // Explicit mono2
+        mono3: ['"Helvetica-Condensed"', "monospace"],
       },
     },
   },

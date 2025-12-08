@@ -54,6 +54,13 @@
   font-style: italic;
   font-display: swap;
 }
+@font-face {
+  font-family: "Helvetica Condensed";
+  src: url("/fonts/helvetica-condensed-black.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* =======================
    ROOT VARIABLES
@@ -75,6 +82,9 @@
 
   /* BRAND FONT */
   --font-brand: "Söhne Mono", monospace;
+
+  /* BRAND FONT */
+  --font-azura: "Helvetica Condensed", monospace;
 }
 
 /* =======================
