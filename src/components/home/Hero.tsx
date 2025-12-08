@@ -33,24 +33,19 @@ export default function Hero() {
     v.preload = "auto";
     v.muted = true;
     v.playsInline = true;
-
     const playVideo = () => v.play().catch(() => {});
     v.addEventListener("loadeddata", playVideo);
-
     return () => v.removeEventListener("loadeddata", playVideo);
   }, []);
 
-  /* ---------------- HERO VISIBILITY CHECK (MOBILE SAFE) ---------------- */
+  /* ---------------- CHECK IF HERO IS IN VIEW ---------------- */
   const heroInView = () => {
     if (!sectionRef.current) return false;
     const rect = sectionRef.current.getBoundingClientRect();
-
     const visibleHeight =
       Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
 
-    const threshold = window.innerHeight * 0.7;
-
-    return visibleHeight >= threshold;
+    return visibleHeight >= window.innerHeight * 0.7;
   };
 
   /* ---------------- SCROLL LOCK ---------------- */
@@ -72,7 +67,6 @@ export default function Hero() {
     document.body.style.left = "";
     document.body.style.right = "";
     document.body.style.overflow = "";
-
     window.scrollTo(0, lastScrollYRef.current);
     setIsLocked(false);
   };
@@ -84,13 +78,12 @@ export default function Hero() {
     if (shouldLock && !isLocked) {
       requestAnimationFrame(lockScroll);
     }
-
     if (!shouldLock && isLocked) {
       requestAnimationFrame(unlockScroll);
     }
   }, [activeIndex, isLocked]);
 
-  /* ---------------- SCROLL & SWIPE ---------------- */
+  /* ---------------- SCROLL & SWIPE SYSTEM ---------------- */
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (!heroInView()) return;
@@ -119,20 +112,14 @@ export default function Hero() {
 
       const dy = startTouchYRef.current - e.touches[0].clientY;
 
-      // Prevent body scroll when locked
-      if (isLocked) {
-        e.preventDefault();
-      }
+      if (isLocked) e.preventDefault();
 
       if (Math.abs(dy) > 40) {
         scrollTimeoutRef.current = true;
         setTimeout(() => (scrollTimeoutRef.current = false), 200);
 
-        if (dy > 0) {
-          setActiveIndex((p) => Math.min(p + 1, MENU.length - 1));
-        } else {
-          setActiveIndex((p) => Math.max(p - 1, 0));
-        }
+        if (dy > 0) setActiveIndex((p) => Math.min(p + 1, MENU.length - 1));
+        else setActiveIndex((p) => Math.max(p - 1, 0));
 
         startTouchYRef.current = e.touches[0].clientY;
       }
@@ -149,7 +136,6 @@ export default function Hero() {
 
     return () => {
       if (isLocked) unlockScroll();
-
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
@@ -157,18 +143,24 @@ export default function Hero() {
     };
   }, [activeIndex, isLocked]);
 
-  /* ---------------- BUTTON SELECT ---------------- */
+  /* ---------------- MENU CLICK (WORKS ANYTIME) ---------------- */
   const handleSelect = (i: number) => {
+    // ALWAYS update active index (no heroInView condition)
     setActiveIndex(i);
+
+    // When clicking menu from outside Hero, scroll back to Hero
+    if (!heroInView() && sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
+  /* ---------------- UI ---------------- */
   return (
     <section
       ref={sectionRef}
       className="relative w-full min-h-svh overflow-hidden font-inter lowercase"
     >
       <div className="sticky top-0 h-svh w-full">
-        {/* VIDEO */}
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
@@ -182,7 +174,7 @@ export default function Hero() {
 
         <div className="absolute inset-0 bg-black/5" />
 
-        {/* LEFT TEXT BLOCKS (unchanged) */}
+        {/* LEFT TEXT */}
         <div className="absolute inset-0 z-20 pointer-events-none">
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
@@ -190,50 +182,29 @@ export default function Hero() {
             transition={{ duration: 1.2, ease: cinematic }}
             className="
               pointer-events-auto text-white font-brand font-normal 
-              leading-20 tracking-tight
-              text-[22px] md:text-[24px] md:w-[434px]
-              absolute 
-              top-16 md:top-[87px]
-              left-6 md:left-16
+              leading-20 tracking-tight text-[22px] md:text-[24px] md:w-[434px]
+              absolute top-16 md:top-[87px] left-6 md:left-16
             "
-            style={{ letterSpacing: "-0.01em" }}
           >
             neo.
           </motion.h1>
 
-          <p
-            className="pointer-events-auto absolute top-[140px] md:top-[159px] left-6 md:left-16 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[223px]"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            global luxury
-            <br />
-            brand factory.
+          <p className="pointer-events-auto absolute top-[140px] md:top-[159px] left-6 md:left-16 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[223px]">
+            global luxury <br /> brand factory.
           </p>
 
-          <p
-            className="pointer-events-auto absolute top-[206px] md:top-[225px] left-6 md:left-16 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[195px]"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            creating in
-            <br />
-            bali and berlin.
+          <p className="pointer-events-auto absolute top-[206px] md:top-[225px] left-6 md:left-16 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[195px]">
+            creating in <br /> bali and berlin.
           </p>
 
-          <p
-            className="pointer-events-auto absolute top-[270px] md:top-[291px] left-6 md:left-3 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[195px]"
-            style={{ letterSpacing: "-0.01em" }}
-          >
-            founded by
-            <br />
-            consultants and
-            <br />
-            developers.
+          <p className="pointer-events-auto absolute top-[270px] md:top-[291px] left-6 md:left-16 text-white font-mono2 font-light text-[22px] md:text-[24px] leading-[22px] md:w-[195px]">
+            founded by <br /> consultants and <br /> developers.
           </p>
         </div>
 
         {/* RIGHT MENU */}
-        <div className="absolute bottom-35 right-6 md:bottom-25 md:right-16 z-30 text-right font-mono2 text-white">
-          <div className="text-[22px] md:text-[24px] tracking-widest font-mono2 mb-2">
+        <div className="absolute bottom-35 right-6 md:bottom-25 md:right-16 z-30 text-right text-white font-mono2">
+          <div className="text-[22px] md:text-[24px] tracking-widest mb-2">
             industries.
           </div>
 
@@ -265,7 +236,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* WHATSAPP BUTTON */}
+        {/* WHATSAPP */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
           <a
             href="https://wa.me/4917682360647"
